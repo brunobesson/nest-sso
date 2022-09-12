@@ -1,0 +1,26 @@
+# API (use vscode REST client extension)
+
+###
+# @name login
+# @prompt email
+# @prompt password
+
+@authToken = {{login.response.body.access_token}}
+
+POST {{baseUrl}}/auth
+Content-Type: application/json
+
+{
+    "email": "{{email}}",
+    "password": "{{password}}"
+}
+
+###
+# @name testAuth
+GET {{baseUrl}}/auth
+Authorization: Bearer {{authToken}}
+
+###
+# @name getUsers
+GET {{baseUrl}}/users
+Authorization: Bearer {{authToken}}

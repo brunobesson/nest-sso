@@ -1,22 +1,24 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
-import { User } from 'src/users/user.entity';
-import { UsersService } from 'src/users/users.service';
-import { JwtPaylaod as JwtPayload } from './auth.service';
+import { JwtPayload as JwtPayload } from './auth.service';
 
 export type Payload = JwtPayload & {
   exp: number;
   iat: number;
+  sub: string;
+};
+
+export type AuthUser = {
+  email: string;
+  userId: number;
+  roles: string[];
 };
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-  constructor(
-    private usersService: UsersService,
-    configService: ConfigService,
-  ) {
+  constructor(configService: ConfigService) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
@@ -24,18 +26,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate({
-    email,
-  }: Payload): Promise<Omit<
-    User,
-    'password' | 'hashPassword' | 'validatePassword'
-  > | null> {
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const user = await this.usersService.findByEmail(email);
-    if (!user) {
-      throw new UnauthorizedException();
-    }
-    const { password, hashPassword, validatePassword, ...userWoPwd } = user;
-    return userWoPwd;
+  async validate({ uid, scp, sub }: Payload): Promise<AuthUser | null> {
+    return { userId: uid, email: sub, roles: scp };
   }
 }

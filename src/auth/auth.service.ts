@@ -11,9 +11,9 @@ import { QueryFailedError } from 'typeorm';
 import { UsersService } from '../users/users.service';
 import { AuthLoginDto } from './auth-login.dto';
 
-export type JwtPaylaod = {
-  email: string;
-  userId: number;
+export type JwtPayload = {
+  uid: number;
+  scp: string[];
 };
 
 @Injectable()
@@ -45,9 +45,9 @@ export class AuthService {
     if (!user) {
       throw new UnauthorizedException();
     }
-    const payload: JwtPaylaod = { email, userId: user.id };
+    const payload: JwtPayload = { uid: user.id, scp: user.roles };
     return {
-      access_token: this.jwtService.sign(payload),
+      access_token: this.jwtService.sign(payload, { subject: user.email }),
     };
   }
 

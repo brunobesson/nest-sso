@@ -1,7 +1,17 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Request,
+  UseGuards,
+} from '@nestjs/common';
 import { ApiBadRequestResponse, ApiOperation } from '@nestjs/swagger';
+import { Request as Req } from 'express';
 import { AuthLoginDto } from './auth-login.dto';
 import { AuthService } from './auth.service';
+import { AuthUser } from './jwt.strategy';
+import { LocalAuthGuard } from './local-auth.guard';
 import { Public } from './public.decorator';
 import { RegisterUserDto } from './register.user.dto';
 
@@ -20,6 +30,7 @@ export class AuthController {
   }
 
   @Public()
+  @UseGuards(LocalAuthGuard)
   @Post()
   async login(
     @Body() authLoginDto: AuthLoginDto,

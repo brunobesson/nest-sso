@@ -7,12 +7,14 @@ import {
   Param,
   Post,
 } from '@nestjs/common';
+import { ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 import { Roles } from '../auth/roles.decorator';
 import { CreateUserDto } from './create.user.dto';
 import { UserDto } from './user.dto';
 import { User } from './user.entity';
 import { UsersService } from './users.service';
 
+@ApiBearerAuth()
 @Controller('users')
 @Roles('admin')
 export class UsersController {
@@ -23,6 +25,7 @@ export class UsersController {
     return { firstName, lastName, email, roles };
   };
 
+  @ApiOperation({ description: 'Retrieve all users' })
   @Get()
   async findAll(): Promise<UserDto[]> {
     return (await this.usersService.findAll()).map((user) =>

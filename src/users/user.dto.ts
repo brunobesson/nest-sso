@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger';
 import {
   ArrayNotEmpty,
   IsArray,
@@ -8,6 +9,7 @@ import {
 import { ALL_ROLES, Role } from './user.entity';
 
 export class UserDto {
+  @ApiProperty({ description: 'User name', example: 'John' })
   @IsNotEmpty()
   firstName: string;
 

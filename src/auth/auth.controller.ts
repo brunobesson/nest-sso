@@ -1,19 +1,22 @@
 import { Body, Controller, Post } from '@nestjs/common';
-import { CreateUserDto } from 'src/users/create.user.dto';
+import { ApiBadRequestResponse, ApiOperation } from '@nestjs/swagger';
 import { AuthLoginDto } from './auth-login.dto';
 import { AuthService } from './auth.service';
 import { Public } from './public.decorator';
+import { RegisterUserDto } from './register.user.dto';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  @ApiOperation({ summary: 'Register new user' })
+  @ApiBadRequestResponse({
+    description: 'Invalid parameters',
+  })
   @Public()
   @Post('register')
-  async register(
-    @Body() createUserDto: Omit<CreateUserDto, 'roles'>,
-  ): Promise<void> {
-    await this.authService.register({ ...createUserDto, roles: ['user'] });
+  async register(@Body() registerUserDto: RegisterUserDto): Promise<void> {
+    await this.authService.register({ ...registerUserDto, roles: ['user'] });
   }
 
   @Public()

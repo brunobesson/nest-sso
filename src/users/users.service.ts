@@ -42,8 +42,15 @@ export class UsersService {
   }
 
   async create(userDto: CreateUserDto): Promise<User> {
-    const user = this.usersRepository.create(userDto);
+    const user = this.usersRepository.create({
+      ...userDto,
+      emailVerified: false,
+    });
     return await this.usersRepository.save(user);
+  }
+
+  async markEmailAsConfirmed(email: string): Promise<void> {
+    await this.usersRepository.update({ email }, { emailVerified: true });
   }
 
   async remove(email: string): Promise<void> {

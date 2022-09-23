@@ -20,6 +20,7 @@ export type JwtAccessTokenPayload = {
   uid: number;
   scp: string[];
   tid: string;
+  email_verified: boolean;
 };
 
 export type JwtRefreshTokenPayload = {
@@ -60,13 +61,18 @@ export class AuthService {
     return this.createTokens(user);
   }
 
-  private createTokens(user: User): {
+  createTokens(user: User): {
     access_token: string;
     refresh_token: string;
   } {
     const tokenId = randomUUID();
     const accessToken = this.generateAccessToken(
-      { uid: user.id, scp: user.roles, tid: tokenId },
+      {
+        uid: user.id,
+        scp: user.roles,
+        tid: tokenId,
+        email_verified: user.emailVerified,
+      },
       user.email,
     );
     const refreshToken = this.generateRefreshToken({

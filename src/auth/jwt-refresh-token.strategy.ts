@@ -48,6 +48,12 @@ export class JwtRefreshTokenStrategy extends PassportStrategy(
     if (!user) {
       throw new UnauthorizedException();
     }
-    return { userId: uid, email: user.email, roles: user.roles, tokenId: tid };
+    return {
+      userId: uid,
+      email: user.email,
+      emailVerified: user.emailVerified,
+      roles: user.roles,
+      tokenId: tid,
+    };
   }
 }

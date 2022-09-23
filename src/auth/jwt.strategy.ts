@@ -12,6 +12,7 @@ export type Payload = JwtAccessTokenPayload & {
 
 export type AuthUser = {
   email: string;
+  emailVerified: boolean;
   userId: number;
   tokenId: string;
   roles: string[];
@@ -27,7 +28,19 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate({ uid, scp, sub, tid }: Payload): Promise<AuthUser> {
-    return { userId: uid, email: sub, roles: scp, tokenId: tid };
+  async validate({
+    uid,
+    scp,
+    sub,
+    tid,
+    email_verified,
+  }: Payload): Promise<AuthUser> {
+    return {
+      userId: uid,
+      email: sub,
+      emailVerified: email_verified,
+      roles: scp,
+      tokenId: tid,
+    };
   }
 }

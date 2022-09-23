@@ -14,20 +14,26 @@ import { JwtAuthGuard } from './jwt-auth.guard';
 import { RolesGuard } from './roles.guard';
 import { LocalStrategy } from './local.strategy';
 import { JwtRefreshTokenStrategy } from './jwt-refresh-token.strategy';
+import { EmailConfirmationGuard } from './email-confirmation-auth.guard';
+import { EmailConfirmationService } from './email-confirmation.service';
+import { EmailModule } from 'src/email/email.module';
 
 @Module({
   imports: [
     UsersModule,
+    EmailModule,
     PassportModule.register(passportModuleConfig),
     JwtModule.registerAsync(jwtModuleAsyncConfig),
   ],
   controllers: [AuthController],
   providers: [
     AuthService,
+    EmailConfirmationService,
     JwtStrategy,
     JwtRefreshTokenStrategy,
     LocalStrategy,
     { provide: APP_GUARD, useClass: JwtAuthGuard },
+    { provide: APP_GUARD, useClass: EmailConfirmationGuard },
     { provide: APP_GUARD, useClass: RolesGuard },
   ],
 })

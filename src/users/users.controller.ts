@@ -16,7 +16,7 @@ import { UsersService } from './users.service';
 
 @ApiBearerAuth()
 @Controller('users')
-@Roles('admin')
+@Roles('user')
 export class UsersController {
   constructor(private usersService: UsersService) {}
 

@@ -4,15 +4,15 @@ import { compare, hash } from 'bcrypt';
 export const ALL_ROLES = ['admin', 'user'] as const;
 export type Role = typeof ALL_ROLES[number];
 
-@Entity()
+@Entity({ name: 'user' })
 export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ name: 'first_name', type: 'varchar' })
+  @Column({ type: 'varchar' })
   firstName: string;
 
-  @Column({ name: 'last_name', type: 'varchar' })
+  @Column({ type: 'varchar' })
   lastName: string;
 
   @Column({ type: 'varchar', unique: true, nullable: false })

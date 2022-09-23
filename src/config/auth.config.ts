@@ -4,7 +4,7 @@ import { IAuthModuleOptions } from '@nestjs/passport';
 
 export const jwtModuleAsyncConfig: JwtModuleAsyncOptions = {
   useFactory: async (configService: ConfigService) => ({
-    secret: configService.get<string>('auth.jwtSecret'),
+    secret: configService.get<string>('auth.jwtAccessTokenSecret'),
     signOptions: { expiresIn: '1h' },
   }),
   inject: [ConfigService],

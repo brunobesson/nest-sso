@@ -1,16 +1,21 @@
 import {
   Body,
   Controller,
-  Get,
   Post,
   Request,
+  UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
-import { ApiBadRequestResponse, ApiOperation } from '@nestjs/swagger';
+import {
+  ApiBadRequestResponse,
+  ApiBearerAuth,
+  ApiOperation,
+} from '@nestjs/swagger';
 import { Request as Req } from 'express';
 import { AuthLoginDto } from './auth-login.dto';
+import { AuthRefreshDto } from './auth-refresh.dto';
 import { AuthService } from './auth.service';
-import { AuthUser } from './jwt.strategy';
+import { JwtRefreshTokenAuthGuard } from './jwt-refesh-token-auth.guard';
 import { LocalAuthGuard } from './local-auth.guard';
 import { Public } from './public.decorator';
 import { RegisterUserDto } from './register.user.dto';
@@ -34,7 +39,27 @@ export class AuthController {
   @Post()
   async login(
     @Body() authLoginDto: AuthLoginDto,
-  ): Promise<{ access_token: string }> {
+  ): Promise<{ access_token: string; refresh_token: string }> {
     return this.authService.login(authLoginDto);
+  }
+
+  @Public()
+  @UseGuards(JwtRefreshTokenAuthGuard)
+  @Post('refresh')
+  async refresh(
+    @Body() authRefreshDto: AuthRefreshDto,
+  ): Promise<{ access_token: string; refresh_token: string }> {
+    const tokens = await this.authService.refresh(authRefreshDto);
+    if (!tokens) {
+      throw new UnauthorizedException();
+    }
+    return tokens;
+  }
+
+  @ApiBearerAuth()
+  @Post('logout')
+  async logout(@Request() request: Req) {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    await this.authService.logout(request.user!);
   }
 }

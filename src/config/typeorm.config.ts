@@ -3,6 +3,7 @@ import {
   TypeOrmModuleAsyncOptions,
   TypeOrmModuleOptions,
 } from '@nestjs/typeorm';
+import { RefreshToken } from 'src/auth/refresh-token.entity';
 import { User } from '../users/user.entity';
 
 export const typeOrmAsyncConfig: TypeOrmModuleAsyncOptions = {
@@ -14,7 +15,7 @@ export const typeOrmAsyncConfig: TypeOrmModuleAsyncOptions = {
       username: configService.get<string>('database.username'),
       password: configService.get<string>('database.password'),
       database: configService.get<string>('database.name'),
-      entities: [User],
+      entities: [User, RefreshToken],
       synchronize: false,
       migrations: [__dirname + '/../db/migrations/*.@(ts|js)'],
       migrationsTransactionMode: 'each',
